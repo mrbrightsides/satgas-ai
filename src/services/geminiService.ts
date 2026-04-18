@@ -1,3 +1,7 @@
+/**
+ * SatGas AI v2 - SADIS Intelligence Core
+ * Version: 2.1.0-autonomy
+ */
 import { GoogleGenAI, Type } from "@google/genai";
 import { FinancialData, AgentAction } from "../types";
 
@@ -132,7 +136,10 @@ export async function chatStream(message: string, history: { role: 'user' | 'ass
     config: {
       systemInstruction: SYSTEM_INSTRUCTION,
     },
-    history: history.map(h => ({ role: h.role, parts: [{ text: h.content }] }))
+    history: history.map(h => ({ 
+      role: h.role === 'assistant' ? 'model' : 'user', 
+      parts: [{ text: h.content }] 
+    }))
   });
 
   return await chat.sendMessageStream({ message });
