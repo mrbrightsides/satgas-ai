@@ -1,3 +1,7 @@
+/**
+ * SatGas AI v2 - Main Interface
+ * Version: 2.1.0-pwa
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { Shield, LayoutDashboard, MessageSquare, AlertCircle, TrendingDown, Info, ChevronRight, CheckCircle2, Loader2, Send, Plus, Trash2, Camera, FileText, Gift, Heart, MapPin, Globe, PhoneCall, HelpCircle, Bell, UserCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -5,6 +9,7 @@ import { Toaster, toast } from 'sonner';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { Message, FinancialData, AgentAction, UserState, Milestone, PinjolEntity } from './types';
 import { analyzeSituation, chatStream } from './services/geminiService';
+import { LandingPage } from './components/LandingPage';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -14,6 +19,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export default function App() {
+  const [showLanding, setShowLanding] = useState(true);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'chat' | 'milestones'>('dashboard');
   const [messages, setMessages] = useState<Message[]>([]);
   const [financialData, setFinancialData] = useState<FinancialData>({
@@ -197,8 +203,19 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen agent-gradient flex flex-col">
-      {/* Crisis Banner */}
+    <>
+      <AnimatePresence mode="wait">
+        {showLanding ? (
+          <motion.div
+            key="landing"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <LandingPage onStart={() => setShowLanding(false)} />
+          </motion.div>
+        ) : (
+          <div className="min-h-screen agent-gradient flex flex-col">
       <AnimatePresence>
         {userState.isCrisisMode && (
           <motion.div 
@@ -602,8 +619,11 @@ export default function App() {
           </div>
         </div>
       </footer>
+          </div>
+        )}
+      </AnimatePresence>
       <Toaster position="top-right" richColors closeButton />
-    </div>
+    </>
   );
 }
 
